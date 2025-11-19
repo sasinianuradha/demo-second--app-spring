@@ -18,7 +18,7 @@ public class Patient {
     private String name;
     private int age;
     private String address;
-    private double payment;
+    private String phoneNumber;
 
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Appointment> appointments;

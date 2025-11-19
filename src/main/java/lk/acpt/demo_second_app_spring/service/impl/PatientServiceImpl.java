@@ -2,13 +2,10 @@ package lk.acpt.demo_second_app_spring.service.impl;
 
 import jakarta.transaction.Transactional;
 import lk.acpt.demo_second_app_spring.dto.PatientDto;
-import lk.acpt.demo_second_app_spring.dto.PatientDtoWithAppointment;
-import lk.acpt.demo_second_app_spring.entity.Appointment;
 import lk.acpt.demo_second_app_spring.entity.Patient;
 import lk.acpt.demo_second_app_spring.repo.AppointmentRepo;
 import lk.acpt.demo_second_app_spring.repo.PatientRepo;
 import lk.acpt.demo_second_app_spring.service.PatientService;
-import lk.acpt.demo_second_app_spring.util.DtoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,12 +34,12 @@ public class PatientServiceImpl implements PatientService {
                 patientDto.getName(),
                 patientDto.getAge(),
                 patientDto.getAddress(),
-                patientDto.getPayment(),
+                patientDto.getPhoneNumber(),
                 null
         );
 
         Patient saved = patientRepo.save(patient);
-        return DtoMapper.toPatientDto(saved);
+        return new PatientDto(saved.getId(), saved.getName(),saved.getAge(),saved.getAddress(),saved.getPhoneNumber());
     }
 
     @Override
@@ -56,24 +53,26 @@ public class PatientServiceImpl implements PatientService {
             p.setName(dto.getName());
             p.setAge(dto.getAge());
             p.setAddress(dto.getAddress());
-            p.setPayment(dto.getPayment());
+            p.setPhoneNumber(dto.getPhoneNumber());
 
             Patient saved = patientRepo.save(p);
-            return DtoMapper.toPatientDto(saved);
+            return new PatientDto(saved.getId(), saved.getName(),saved.getAge(),saved.getAddress(),saved.getPhoneNumber());
         }
         return null;
     }
 
     @Override
-    public PatientDto deletePatient(Integer id) {
+    public String deletePatient(Integer id) {
 
         Optional<Patient> byId = patientRepo.findById(id);
 
         if (byId.isPresent()) {
             patientRepo.deleteById(id);
-            return DtoMapper.toPatientDto(byId.get());
+            Patient saved =  byId.get();
+            return new String("Patient has been deleted");
+
         }
-        return null;
+        return String.format("Patient can't be found: ",id);
     }
 
     @Override
@@ -83,46 +82,12 @@ public class PatientServiceImpl implements PatientService {
         List<PatientDto> dtos = new ArrayList<>();
 
         for (Patient p : all) {
-            dtos.add(DtoMapper.toPatientDto(p));
+            dtos.add(new PatientDto(p.getId(), p.getName(), p.getAge(), p.getAddress(), p.getPhoneNumber()));
         }
         return dtos;
     }
 
-    @Override
-    public PatientDto getPatientById(Integer id) {
-        return patientRepo.findById(id)
-                .map(DtoMapper::toPatientDto)
-                .orElse(null);
-    }
 
-    @Override
-    public PatientDtoWithAppointment savePatientWithAppointments(PatientDtoWithAppointment dto) {
 
-        Patient patient = new Patient(
-                dto.getId(),
-                dto.getName(),
-                dto.getAge(),
-                dto.getAddress(),
-                dto.getPayment(),
-                new ArrayList<>()
-        );
-
-        List<Appointment> appointments = new ArrayList<>();
-
-        dto.getAppointment().forEach(a -> {
-            appointments.add(new Appointment(
-                    a.getId(),
-                    a.getDoctorName(),
-                    a.getDescription(),
-                    patient
-            ));
-        });
-
-        patient.setAppointments(appointments);
-
-        Patient saved = patientRepo.save(patient);
-
-        return DtoMapper.toPatientWithAppointments(saved);
-    }
 
 }

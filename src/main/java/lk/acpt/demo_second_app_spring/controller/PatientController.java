@@ -1,7 +1,6 @@
 package lk.acpt.demo_second_app_spring.controller;
 
 import lk.acpt.demo_second_app_spring.dto.PatientDto;
-import lk.acpt.demo_second_app_spring.dto.PatientDtoWithAppointment;
 import lk.acpt.demo_second_app_spring.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,9 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@CrossOrigin(origins = "http://127.0.0.1:5500")
 @RestController
-@RequestMapping("/api/patients")
+@RequestMapping("/api/v1/patients")
 public class PatientController {
     @Autowired
     private PatientService patientService;
@@ -21,28 +20,24 @@ public class PatientController {
         return patientService.savePatient(dto);
     }
 
-    @PutMapping("/update")
-    public PatientDto update(@RequestBody PatientDto dto) {
-        return patientService.updatePatient(dto);
+    @PutMapping("/update/{id}")
+    public ResponseEntity<PatientDto> update(@PathVariable Integer id, @RequestBody PatientDto dto) {
+              dto.setId(id);
+PatientDto patientDto=patientService.updatePatient(dto);
+        return new ResponseEntity<>(patientDto, HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
-    public PatientDto delete(@PathVariable Integer id) {
-        return patientService.deletePatient(id);
+    public ResponseEntity<String> delete(@PathVariable Integer id) {
+        String deleted=patientService.deletePatient(id);
+        return  new ResponseEntity<>(deleted,HttpStatus.OK);
     }
 
-    @GetMapping("/all")
+    @GetMapping()
     public List<PatientDto> getAll() {
         return patientService.getAllPatients();
     }
 
-    @GetMapping("/{id}")
-    public PatientDto getById(@PathVariable Integer id) {
-        return patientService.getPatientById(id);
-    }
 
-    @PostMapping("/save-with-appointments")
-    public PatientDtoWithAppointment saveWithAppointments(@RequestBody PatientDtoWithAppointment dto) {
-        return patientService.savePatientWithAppointments(dto);
-    }
+
 }
