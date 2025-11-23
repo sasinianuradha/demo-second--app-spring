@@ -68,11 +68,11 @@ public class PatientServiceImpl implements PatientService {
 
         if (byId.isPresent()) {
             patientRepo.deleteById(id);
-            Patient saved =  byId.get();
+            //Patient saved =  byId.get();
             return new String("Patient has been deleted");
 
         }
-        return String.format("Patient can't be found: ",id);
+        return String.format("Patient can't be found: " + id);
     }
 
     @Override
