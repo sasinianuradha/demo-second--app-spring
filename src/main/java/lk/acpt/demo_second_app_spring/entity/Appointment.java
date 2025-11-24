@@ -15,6 +15,8 @@ public class Appointment {
     private Integer id;
     private String doctorName;
     private String description;
+    private String date;
+    private String time;
 
     @ManyToOne
     @JoinColumn(name = "patient_id")

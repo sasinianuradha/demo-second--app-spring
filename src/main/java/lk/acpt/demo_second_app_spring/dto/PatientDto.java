@@ -13,6 +13,14 @@ public class PatientDto {
     private String name;
     private int age;
     private String address;
-    private double payment;
+    private String phoneNumber;
+    private String photoUrl;
 
+    public PatientDto(Integer id, String name, int age, String address, String phoneNumber) {
+        this.id = id;
+        this.name = name;
+        this.age = age;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+    }
 }
