@@ -4,8 +4,10 @@ import lk.acpt.demo_second_app_spring.dto.PatientDto;
 import lk.acpt.demo_second_app_spring.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -16,11 +18,16 @@ public class PatientController {
     @Autowired
     private PatientService patientService;
 
-    @PostMapping("/save")
-    public PatientDto save(@RequestBody PatientDto dto) {
+//    @PostMapping("/save")
+@PostMapping(value = "/save", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+public ResponseEntity<PatientDto> save(
+        @RequestPart("patient") PatientDto dto,
+        @RequestPart(value = "photo", required = false) MultipartFile photo) {
 
-        return patientService.savePatient(dto);
-    }
+    PatientDto saved = patientService.savePatient(dto, photo);
+    return new ResponseEntity<>(saved, HttpStatus.OK);
+}
+
 
     @PutMapping("/update/{id}")
     public ResponseEntity<PatientDto> update(@PathVariable Integer id, @RequestBody PatientDto dto) {

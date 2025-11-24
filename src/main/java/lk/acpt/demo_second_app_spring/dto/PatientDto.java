@@ -14,6 +14,13 @@ public class PatientDto {
     private int age;
     private String address;
     private String phoneNumber;
+    private String photoUrl;
 
-
+    public PatientDto(Integer id, String name, int age, String address, String phoneNumber) {
+        this.id = id;
+        this.name = name;
+        this.age = age;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+    }
 }
